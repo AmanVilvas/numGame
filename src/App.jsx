@@ -129,11 +129,8 @@ export default function App() {
         setLastUserGuess(userInput);
 
         if (userInput === targetNumber) {
-            setGameState('correct');
-            setTimeout(() => {
-                setLevel(prev => prev + 1);
-                setGameState('ready');
-            }, 2000);
+            setLevel(prev => prev + 1);
+            startRound();
         } else {
             setGameState('wrong');
         }
@@ -225,7 +222,7 @@ export default function App() {
                     </motion.div>
                 )}
 
-                {(gameState === 'showing' || gameState === 'input' || gameState === 'correct') && (
+                {(gameState === 'showing' || gameState === 'input') && (
                     <motion.div
                         key="game-card"
                         initial={{ opacity: 0 }}
@@ -236,14 +233,7 @@ export default function App() {
                     >
                         <div className="absolute h-32 w-2/3 bottom-[-30px] left-1/2 -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,rgba(255,106,0,0.15),transparent_70%)] blur-3xl pointer-events-none" />
 
-                        <div className={`
-              relative p-6 sm:p-8 md:p-12 lg:p-16 rounded-2xl md:rounded-3xl border overflow-hidden
-              transition-all duration-500 glass-effect
-              ${gameState === 'correct'
-                                ? 'border-emerald-500/50 shadow-[0_0_60px_rgba(16,185,129,0.2)]'
-                                : 'border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.5)]'
-                            }
-            `}>
+                        <div className="relative p-6 sm:p-8 md:p-12 lg:p-16 rounded-2xl md:rounded-3xl border overflow-hidden transition-all duration-500 glass-effect border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
                             <div className="game-stage">
                                 <AnimatePresence mode="wait">
                                     {gameState === 'showing' && (
@@ -277,7 +267,7 @@ export default function App() {
                                         </motion.div>
                                     )}
 
-                                    {(gameState === 'input' || gameState === 'correct') && (
+                                    {gameState === 'input' && (
                                         <motion.div
                                             key="input"
                                             initial={{ opacity: 0, scale: 0.95 }}
@@ -308,41 +298,31 @@ export default function App() {
                                                         inputMode="numeric"
                                                         value={userInput}
                                                         onChange={(e) => setUserInput(e.target.value.replace(/\D/g, ''))}
-                                                        disabled={gameState === 'correct'}
-                                                        className={`
-                          w-full bg-white/5 border-2 text-3xl sm:text-4xl md:text-5xl font-bold text-center py-4 md:py-6 px-3 md:px-4 outline-none transition-all rounded-xl md:rounded-2xl
-                          ${gameState === 'correct'
-                                                                ? 'border-emerald-500/60 text-emerald-400 bg-emerald-500/5'
-                                                                : 'border-white/20 text-white focus:border-orange-500/60 focus:bg-white/10'
-                                                            }
-                        `}
+                                                        disabled={false}
+                                                        className="w-full bg-white/5 border-2 text-3xl sm:text-4xl md:text-5xl font-bold text-center py-4 md:py-6 px-3 md:px-4 outline-none transition-all rounded-xl md:rounded-2xl border-white/20 text-white focus:border-orange-500/60 focus:bg-white/10"
                                                         placeholder="?"
                                                         autoFocus
                                                     />
-                                                    <AnimatePresence>
-                                                        {gameState === 'correct' && <SuccessIndicator />}
-                                                    </AnimatePresence>
                                                 </div>
 
-                                                {gameState === 'input' && (
-                                                    <motion.button
-                                                        initial={{ opacity: 0 }}
-                                                        animate={{ opacity: 1 }}
-                                                        type="submit"
-                                                        disabled={!userInput}
-                                                        whileHover={userInput ? { scale: 1.03, y: -2 } : {}}
-                                                        whileTap={userInput ? { scale: 0.97 } : {}}
-                                                        className={`
+                                                <motion.button
+                                                    initial={{ opacity: 0 }}
+                                                    animate={{ opacity: 1 }}
+                                                    type="submit"
+                                                    disabled={!userInput}
+                                                    whileHover={userInput ? { scale: 1.03, y: -2 } : {}}
+                                                    whileTap={userInput ? { scale: 0.97 } : {}}
+                                                    className={`
                           px-10 md:px-12 py-3 md:py-4 rounded-xl font-bold text-xs md:text-sm tracking-wide transition-all
                           ${!userInput
-                                                                ? 'bg-white/5 text-white/30 cursor-not-allowed border border-white/10'
-                                                                : 'bg-gradient-to-r from-orange-600 to-orange-500 text-white shadow-[0_8px_20px_rgba(255,106,0,0.3)] hover:shadow-[0_12px_30px_rgba(255,106,0,0.4)]'
-                                                            }
+                                                            ? 'bg-white/5 text-white/30 cursor-not-allowed border border-white/10'
+                                                            : 'bg-gradient-to-r from-orange-600 to-orange-500 text-white shadow-[0_8px_20px_rgba(255,106,0,0.3)] hover:shadow-[0_12px_30px_rgba(255,106,0,0.4)]'
+                                                        }
                         `}
-                                                    >
-                                                        SUBMIT
-                                                    </motion.button>
-                                                )}
+                                                >
+                                                    SUBMIT
+                                                </motion.button>
+
                                             </form>
                                         </motion.div>
                                     )}
@@ -366,8 +346,8 @@ export default function App() {
 
             <footer className="fixed bottom-4 md:bottom-6 text-slate-600 text-[8px] md:text-[9px] font-bold uppercase tracking-[0.3em] md:tracking-[0.4em] flex items-center gap-3 md:gap-4 pointer-events-none">
                 <span>RATHISHRAVI</span>
-                
-                
+
+
             </footer>
         </div>
     );
